@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "3000"
+    environment:
+      - BACKEND_API_URL=${BACKEND_API_URL}
+      - API_BEARER_TOKEN=${API_BEARER_TOKEN}
+    env_file:
+      - .env
+    restart: unless-stopped
