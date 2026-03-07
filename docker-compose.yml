@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: rag_frontend_app
     expose:
       - "3000"
     environment:
