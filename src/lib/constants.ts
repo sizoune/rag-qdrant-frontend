@@ -33,6 +33,9 @@ export const UI = {
   KB_MIGRATE_S3: "Migrasi ke S3",
   KB_MIGRATE_S3_CONFIRM: "Pindahkan semua file upload lokal ke S3? File lokal akan dihapus setelah berhasil diupload.",
   KB_MIGRATE_S3_SUCCESS: "Migrasi ke S3 berhasil",
+  KB_S3_STATUS: "S3",
+  KB_IN_S3: "Tersimpan",
+  KB_NOT_IN_S3: "Belum",
 
   // Upload
   UPLOAD_TITLE: "Unggah Dokumen",

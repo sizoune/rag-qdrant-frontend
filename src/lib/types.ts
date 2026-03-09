@@ -30,11 +30,15 @@ export interface FileItem {
   source_type: string;
   chunk_count: number;
   last_seen?: string;
+  in_s3: boolean;
 }
 
 export interface FileListResponse {
   items: FileItem[];
   total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
 }
 
 export interface UploadFileItem {

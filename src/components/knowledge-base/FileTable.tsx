@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Trash2, RefreshCw, Loader2 } from "lucide-react";
+import { Trash2, RefreshCw, Loader2, Cloud, CloudOff } from "lucide-react";
 
 interface FileTableProps {
   files: FileItem[];
@@ -98,6 +98,7 @@ export default function FileTable({ files, onRefresh }: FileTableProps) {
             <TableHead>{UI.KB_TYPE}</TableHead>
             <TableHead className="text-right">{UI.KB_CHUNKS}</TableHead>
             <TableHead>{UI.KB_LAST_SEEN}</TableHead>
+            <TableHead className="text-center">{UI.KB_S3_STATUS}</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
@@ -112,6 +113,19 @@ export default function FileTable({ files, onRefresh }: FileTableProps) {
               </TableCell>
               <TableCell className="text-right">{file.chunk_count}</TableCell>
               <TableCell>{formatDate(file.last_seen)}</TableCell>
+              <TableCell className="text-center">
+                {file.in_s3 ? (
+                  <Badge variant="default" className="gap-1">
+                    <Cloud className="h-3 w-3" />
+                    {UI.KB_IN_S3}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <CloudOff className="h-3 w-3" />
+                    {UI.KB_NOT_IN_S3}
+                  </Badge>
+                )}
+              </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
                   <Button

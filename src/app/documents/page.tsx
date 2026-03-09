@@ -31,10 +31,11 @@ function KBSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [isReingestingAll, setIsReingestingAll] = useState(false);
   const [isMigrating, setIsMigrating] = useState(false);
+  const [page, setPage] = useState(1);
 
   const fetchFiles = useCallback(async () => {
     try {
-      const res = await fetch("/api/files");
+      const res = await fetch(`/api/files?page=${page}&page_size=10`);
       const json: FileListResponse = await res.json();
       setData(json);
     } catch {
@@ -42,7 +43,7 @@ function KBSection() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchFiles();
@@ -122,7 +123,34 @@ function KBSection() {
             ))}
           </div>
         ) : data ? (
-          <FileTable files={data.items} onRefresh={fetchFiles} />
+          <>
+            <FileTable files={data.items} onRefresh={fetchFiles} />
+            {data.total_pages > 1 && (
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Halaman {data.page} dari {data.total_pages} ({data.total} dokumen)
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page <= 1}
+                  >
+                    Sebelumnya
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))}
+                    disabled={page >= data.total_pages}
+                  >
+                    Selanjutnya
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         ) : null}
       </CardContent>
     </Card>
