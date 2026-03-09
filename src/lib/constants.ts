@@ -30,6 +30,9 @@ export const UI = {
   KB_REINGEST_ALL: "Ingest Ulang Semua",
   KB_CONFIRM_DELETE: "Yakin ingin menghapus sumber ini?",
   KB_EMPTY: "Belum ada dokumen yang di-ingest",
+  KB_MIGRATE_S3: "Migrasi ke S3",
+  KB_MIGRATE_S3_CONFIRM: "Pindahkan semua file upload lokal ke S3? File lokal akan dihapus setelah berhasil diupload.",
+  KB_MIGRATE_S3_SUCCESS: "Migrasi ke S3 berhasil",
 
   // Upload
   UPLOAD_TITLE: "Unggah Dokumen",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Database, Upload, Globe, Activity } from "lucide-react";
+import { Database, Upload, Globe, Activity, CloudUpload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
 import { FileListResponse, OperationResponse } from "@/lib/types";
@@ -30,6 +30,7 @@ function KBSection() {
   const [data, setData] = useState<FileListResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isReingestingAll, setIsReingestingAll] = useState(false);
+  const [isMigrating, setIsMigrating] = useState(false);
 
   const fetchFiles = useCallback(async () => {
     try {
@@ -65,21 +66,53 @@ function KBSection() {
     }
   };
 
+  const handleMigrateToS3 = async () => {
+    if (!confirm(UI.KB_MIGRATE_S3_CONFIRM)) return;
+    setIsMigrating(true);
+    try {
+      const res = await fetch("/api/uploads/migrate-to-s3", { method: "POST" });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        toast.success(result.message || UI.KB_MIGRATE_S3_SUCCESS);
+      } else {
+        toast.error(result.message || UI.COMMON_ERROR);
+      }
+    } catch {
+      toast.error(UI.COMMON_ERROR);
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{UI.KB_TITLE}</CardTitle>
-        <Button
-          onClick={handleReingestAll}
-          disabled={isReingestingAll || !data?.items.length}
-        >
-          {isReingestingAll ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          ) : (
-            <RefreshCw className="h-4 w-4 mr-2" />
-          )}
-          {UI.KB_REINGEST_ALL}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleMigrateToS3}
+            disabled={isMigrating}
+          >
+            {isMigrating ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <CloudUpload className="h-4 w-4 mr-2" />
+            )}
+            {UI.KB_MIGRATE_S3}
+          </Button>
+          <Button
+            onClick={handleReingestAll}
+            disabled={isReingestingAll || !data?.items.length}
+          >
+            {isReingestingAll ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            {UI.KB_REINGEST_ALL}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
