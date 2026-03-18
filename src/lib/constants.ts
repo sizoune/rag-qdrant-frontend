@@ -63,6 +63,14 @@ export const UI = {
   STATUS_FINISHED: "Selesai",
   STATUS_LAST_MESSAGE: "Pesan Terakhir",
 
+  // Auth
+  AUTH_LOGIN_TITLE: "Masuk",
+  AUTH_USERNAME_LABEL: "Nama Pengguna",
+  AUTH_PASSWORD_LABEL: "Kata Sandi",
+  AUTH_LOGIN_BUTTON: "Masuk",
+  AUTH_LOGIN_ERROR: "Nama pengguna atau kata sandi salah",
+  AUTH_LOGOUT: "Keluar",
+
   // Common
   COMMON_LOADING: "Memuat...",
   COMMON_ERROR: "Terjadi kesalahan",

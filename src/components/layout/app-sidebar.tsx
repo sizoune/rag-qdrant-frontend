@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { MessageSquare, FolderOpen, Menu } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { MessageSquare, FolderOpen, Menu, LogOut } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import { UI } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -16,6 +17,12 @@ const navItems = [
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  }
 
   return (
     <nav className="flex h-full flex-col items-center py-4">
@@ -56,8 +63,21 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
         </TooltipProvider>
       </div>
 
-      {/* Theme Toggle at bottom */}
-      <div className="mt-auto">
+      {/* Logout + Theme Toggle at bottom */}
+      <div className="mt-auto flex flex-col items-center gap-2">
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <button
+                onClick={handleLogout}
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              />
+            }
+          >
+            <LogOut className="h-5 w-5" />
+          </TooltipTrigger>
+          <TooltipContent side="right">{UI.AUTH_LOGOUT}</TooltipContent>
+        </Tooltip>
         <ThemeToggle />
       </div>
     </nav>

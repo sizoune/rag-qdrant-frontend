@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
-import FloatingIngestStatus from "@/components/status/FloatingIngestStatus";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,13 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex h-svh">
-            <AppSidebar />
-            <main className="flex-1 overflow-auto">
-              {children}
-            </main>
-          </div>
-          <FloatingIngestStatus />
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>
