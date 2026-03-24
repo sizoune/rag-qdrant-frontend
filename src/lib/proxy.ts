@@ -40,7 +40,7 @@ export async function proxyRequest(
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, message: "Gagal terhubung ke server" },
       { status: 502 }

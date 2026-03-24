@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 interface Session {
   id: string;
@@ -15,29 +15,30 @@ function generateId() {
 const STORAGE_KEY = "rag-chat-sessions";
 
 export function useSessions() {
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSessionId, setActiveSessionId] = useState<string>("");
-
-  useEffect(() => {
+  const [sessions, setSessions] = useState<Session[]>(() => {
+    if (typeof window === "undefined") return [];
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed: Session[] = JSON.parse(stored);
-      setSessions(parsed);
-      if (parsed.length > 0) {
-        setActiveSessionId(parsed[0].id);
-      }
+      if (parsed.length > 0) return parsed;
     }
-    if (!stored || JSON.parse(stored).length === 0) {
-      const newSession: Session = {
-        id: generateId(),
-        title: "Sesi Baru",
-        created_at: new Date().toISOString(),
-      };
-      setSessions([newSession]);
-      setActiveSessionId(newSession.id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([newSession]));
+    const newSession: Session = {
+      id: generateId(),
+      title: "Sesi Baru",
+      created_at: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([newSession]));
+    return [newSession];
+  });
+  const [activeSessionId, setActiveSessionId] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed: Session[] = JSON.parse(stored);
+      if (parsed.length > 0) return parsed[0].id;
     }
-  }, []);
+    return "";
+  });
 
   const saveToStorage = useCallback((updated: Session[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
