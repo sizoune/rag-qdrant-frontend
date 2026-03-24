@@ -1,9 +1,5 @@
 import { expect, test } from "vitest";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-// Basic cn function test
-const cn = (...inputs: (string | undefined | null | false)[]) => twMerge(clsx(inputs));
+import { cn } from "./utils";
 
 test("cn merges classes correctly", () => {
   expect(cn("p-4", "m-2")).toBe("p-4 m-2");
