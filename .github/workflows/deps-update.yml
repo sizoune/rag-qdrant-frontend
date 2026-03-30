@@ -89,13 +89,7 @@ jobs:
         if: steps.changes.outputs.has_changes == 'true' && steps.lint.outputs.lint_pass == 'false'
         run: exit 1
 
-      - name: Build
-        if: steps.changes.outputs.has_changes == 'true' && steps.lint.outputs.lint_pass != 'false'
-        run: bun run build
 
-      - name: Run tests
-        if: steps.changes.outputs.has_changes == 'true' && steps.lint.outputs.lint_pass != 'false'
-        run: bunx vitest run
 
       - name: Generate update summary
         if: steps.changes.outputs.has_changes == 'true' && steps.lint.outputs.lint_pass != 'false'
@@ -167,10 +161,8 @@ jobs:
                 `**Date:** ${date}`,
                 '**Scope:** Minor and patch versions only',
                 '',
-                '### Checks passed',
-                '- [x] Lint',
-                '- [x] Build',
-                '- [x] Test',
+                '### Note',
+                '- [ ] Please verify build and tests locally before merging',
                 '',
                 '### Lockfile diff (first 200 lines)',
                 '```diff',
