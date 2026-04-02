@@ -76,7 +76,7 @@ export default function ChatPage() {
             </div>
           </SheetContent>
         </Sheet>
-        <span className="text-sm font-medium truncate">
+        <span className="text-sm font-medium font-serif truncate">
           {activeSession?.title ?? "Chat"}
         </span>
       </div>

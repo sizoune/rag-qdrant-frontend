@@ -60,7 +60,7 @@ export default function IngestStatus() {
         <CardTitle className="flex items-center gap-3">
           {UI.STATUS_TITLE}
           {data.running ? (
-            <Badge className="bg-green-500 text-white animate-pulse">
+            <Badge className="bg-primary text-primary-foreground animate-pulse">
               {UI.STATUS_RUNNING}
             </Badge>
           ) : (

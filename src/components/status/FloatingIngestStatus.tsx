@@ -36,13 +36,13 @@ export default function FloatingIngestStatus() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <div className="rounded-lg border bg-background shadow-lg">
+      <div className="rounded-lg border bg-background ring-1 ring-ring shadow-[0_4px_24px_rgba(0,0,0,0.05)]">
         <div
           className="flex items-center gap-2 px-3 py-2 cursor-pointer select-none"
           onClick={() => setExpanded(!expanded)}
         >
-          <Loader2 className="h-4 w-4 animate-spin text-green-500 shrink-0" />
-          <Badge className="bg-green-500 text-white text-xs animate-pulse">
+          <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+          <Badge className="bg-primary text-primary-foreground text-xs animate-pulse">
             {UI.STATUS_RUNNING}
           </Badge>
           <span className="text-sm truncate flex-1">

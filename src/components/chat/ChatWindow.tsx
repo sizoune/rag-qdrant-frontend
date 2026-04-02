@@ -30,7 +30,7 @@ export default function ChatWindow({
       <div className="flex-1 overflow-auto p-4">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2">
-            <p className="text-lg font-medium text-muted-foreground">{UI.CHAT_NO_MESSAGES}</p>
+            <p className="text-lg font-medium font-serif text-muted-foreground">{UI.CHAT_NO_MESSAGES}</p>
           </div>
         ) : (
           <div className="mx-auto max-w-3xl space-y-6">

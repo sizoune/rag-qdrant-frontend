@@ -46,7 +46,7 @@ export default function LoginPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-xl">
             R
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-2xl font-medium font-serif tracking-tight">
             {UI.AUTH_LOGIN_TITLE}
           </h1>
           <p className="text-sm text-muted-foreground">RAG Chat</p>

@@ -24,14 +24,14 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
         className={cn(
           "max-w-[80%] rounded-2xl p-4",
           isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-card text-foreground"
+            ? "bg-secondary text-secondary-foreground ring-1 ring-ring"
+            : "bg-card text-foreground ring-1 ring-border"
         )}
       >
         {isUser ? (
           <p className="whitespace-pre-wrap text-sm">{message.content}</p>
         ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
+          <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-serif prose-headings:font-medium">
             {message.content ? (
               <ReactMarkdown>{message.content}</ReactMarkdown>
             ) : (

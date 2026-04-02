@@ -161,11 +161,11 @@ export default function UploadZone({ onUploadComplete }: UploadZoneProps) {
   const statusIcon = (status: FileUploadStatus) => {
     switch (status) {
       case "uploading":
-        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+        return <Loader2 className="h-4 w-4 animate-spin text-primary" />;
       case "success":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-primary" />;
       case "failed":
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       default:
         return <div className="h-4 w-4 rounded-full border-2 border-muted-foreground" />;
     }
