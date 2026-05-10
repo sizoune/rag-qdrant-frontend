@@ -9,16 +9,40 @@ export interface TokenUsage {
   total_estimate: number;
 }
 
+export interface LocationItem {
+  /** Pre-formatted Indonesian label, e.g. "Halaman 5 — Bab 2 § 1.3". */
+  display: string;
+  /** Trimmed chunk text (~200 chars). */
+  chunk_preview: string;
+  /** PDF page number (1-indexed). */
+  page?: number | null;
+  /** URL anchor for web sources. */
+  url_fragment?: string | null;
+  /** Inclusive (start, end) line numbers for code/text. */
+  line_range?: [number, number] | null;
+}
+
+export interface SourceItem {
+  /** Path or URL of the source document. */
+  source: string;
+  /** "local" | "web" | "telegram_upload" | ... */
+  source_type: string;
+  /** Display basename (null for web URLs). */
+  filename?: string | null;
+  /** One or more cited locations within this source. */
+  locations: LocationItem[];
+}
+
 export interface ChatResponse {
   answer: string;
-  sources: string[];
+  sources: SourceItem[];
   token_usage: TokenUsage;
 }
 
 export interface SSEEvent {
   type: "token" | "sources" | "token_usage" | "done";
   content?: string;
-  sources?: string[];
+  sources?: SourceItem[];
   input_estimate?: number;
   output_estimate?: number;
   total_estimate?: number;
@@ -92,6 +116,6 @@ export interface ChatSession {
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  sources?: string[];
+  sources?: SourceItem[];
   token_usage?: TokenUsage;
 }

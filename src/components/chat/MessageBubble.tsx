@@ -2,19 +2,114 @@
 
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
+  FileText,
+  Globe,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
-import type { ChatMessage } from "@/lib/types";
+import type { ChatMessage, LocationItem, SourceItem } from "@/lib/types";
 
 interface MessageBubbleProps {
   message: ChatMessage;
 }
 
+function isWebSource(source: SourceItem): boolean {
+  return (
+    source.source_type === "web" ||
+    source.source.startsWith("http://") ||
+    source.source.startsWith("https://")
+  );
+}
+
+function buildDeepLink(
+  sourceItem: SourceItem,
+  location: LocationItem
+): string | null {
+  if (isWebSource(sourceItem)) {
+    if (location.url_fragment) {
+      return `${sourceItem.source}#${location.url_fragment}`;
+    }
+    return sourceItem.source;
+  }
+  // Local PDF — surface only when running in environments that can resolve it.
+  // Browsers cannot open local file paths in production; safe fallback: no link.
+  return null;
+}
+
+function SourceBlock({ source }: { source: SourceItem }) {
+  const label = source.filename || source.source;
+  const Icon = isWebSource(source) ? Globe : FileText;
+  const totalLocations = source.locations.length;
+
+  return (
+    <div className="rounded-md border border-border/60 bg-muted/30 p-2">
+      <div className="flex items-center gap-2 text-xs font-medium">
+        <Icon className="size-3 shrink-0 text-muted-foreground" />
+        {isWebSource(source) ? (
+          <a
+            href={source.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate text-foreground hover:underline"
+            title={source.source}
+          >
+            {label}
+          </a>
+        ) : (
+          <span className="truncate text-foreground" title={source.source}>
+            {label}
+          </span>
+        )}
+        {totalLocations > 1 && (
+          <span className="ml-auto text-[10px] text-muted-foreground">
+            {totalLocations} bagian
+          </span>
+        )}
+      </div>
+
+      <ul className="mt-2 space-y-2">
+        {source.locations.map((loc, i) => {
+          const link = buildDeepLink(source, loc);
+          return (
+            <li key={i} className="text-xs">
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <span className="font-medium text-foreground">
+                  {loc.display}
+                </span>
+                {link && (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                    title="Buka sumber"
+                  >
+                    <ExternalLink className="size-3" />
+                  </a>
+                )}
+              </div>
+              {loc.chunk_preview && (
+                <p className="mt-0.5 line-clamp-3 text-muted-foreground">
+                  &ldquo;{loc.chunk_preview}&rdquo;
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export default function MessageBubble({ message }: MessageBubbleProps) {
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const isUser = message.role === "user";
+  const sources = message.sources ?? [];
 
   return (
     <div
@@ -42,7 +137,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         )}
 
-        {!isUser && message.sources && message.sources.length > 0 && (
+        {!isUser && sources.length > 0 && (
           <div className="mt-3 border-t pt-3">
             <button
               onClick={() => setSourcesOpen(!sourcesOpen)}
@@ -53,16 +148,14 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
               ) : (
                 <ChevronRight className="size-3" />
               )}
-              {UI.CHAT_SOURCES} ({message.sources.length})
+              {UI.CHAT_SOURCES} ({sources.length})
             </button>
             {sourcesOpen && (
-              <ul className="mt-1 space-y-1">
-                {message.sources.map((source, i) => (
-                  <li key={i} className="text-xs text-muted-foreground">
-                    {source}
-                  </li>
+              <div className="mt-2 space-y-2">
+                {sources.map((source, i) => (
+                  <SourceBlock key={`${source.source}-${i}`} source={source} />
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         )}
