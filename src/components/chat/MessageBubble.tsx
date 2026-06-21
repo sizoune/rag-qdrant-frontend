@@ -117,10 +117,9 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-2xl p-4",
           isUser
-            ? "bg-secondary text-secondary-foreground ring-1 ring-ring"
-            : "bg-card text-foreground ring-1 ring-border"
+            ? "max-w-[85%] rounded-2xl bg-secondary px-4 py-2.5 text-secondary-foreground"
+            : "w-full text-foreground"
         )}
       >
         {isUser ? (

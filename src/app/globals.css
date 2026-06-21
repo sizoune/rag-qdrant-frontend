@@ -125,19 +125,27 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
     line-height: 1.60;
+    -webkit-font-smoothing: antialiased;
   }
-  html {
-    @apply font-sans;
+  /* Warm, on-brand text selection (terracotta tint) */
+  ::selection {
+    background-color: color-mix(in oklch, var(--primary) 22%, transparent);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 500;
+    text-wrap: balance;
   }
   h1 { line-height: 1.10; }
   h2 { line-height: 1.20; }
   h3 { line-height: 1.30; }
   h4, h5, h6 { line-height: 1.30; }
+  p { text-wrap: pretty; }
 }

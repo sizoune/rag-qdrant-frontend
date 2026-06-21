@@ -32,7 +32,7 @@ export default function ChatInput({ onSend, isLoading, onStop }: ChatInputProps)
   };
 
   return (
-    <div className="mx-4 mb-4 rounded-2xl border bg-card ring-1 ring-ring p-3">
+    <div className="mx-4 mb-4 rounded-2xl border border-border bg-card p-3 transition-colors focus-within:border-primary/60">
       <div className="flex items-end gap-2">
         <Textarea
           ref={textareaRef}

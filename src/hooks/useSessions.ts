@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { clearStoredMessages } from "@/lib/chat-storage";
 
 interface Session {
   id: string;
@@ -61,6 +62,13 @@ export function useSessions() {
 
   const deleteSession = useCallback(
     (id: string) => {
+      // Best-effort: free the server-side conversation history for this session.
+      // Fire-and-forget so local deletion stays instant even if the backend is down.
+      fetch(`/api/chat/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(
+        () => {}
+      );
+      // Drop the locally persisted transcript too.
+      clearStoredMessages(id);
       setSessions((prev) => {
         const updated = prev.filter((s) => s.id !== id);
         saveToStorage(updated);
