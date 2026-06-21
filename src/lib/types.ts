@@ -118,4 +118,8 @@ export interface ChatMessage {
   content: string;
   sources?: SourceItem[];
   token_usage?: TokenUsage;
+  /** Epoch ms — user: waktu kirim; assistant: waktu jawaban selesai. */
+  createdAt?: number;
+  /** Assistant only — lama response (ms) dari pertanyaan dikirim s/d jawaban selesai. */
+  durationMs?: number;
 }

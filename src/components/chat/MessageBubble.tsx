@@ -106,14 +106,37 @@ function SourceBlock({ source }: { source: SourceItem }) {
   );
 }
 
+function formatTime(ts?: number): string | null {
+  if (!ts) return null;
+  return new Date(ts).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDuration(ms?: number): string | null {
+  if (ms == null) return null;
+  if (ms < 1000) return `${ms} ms`;
+  const seconds = ms / 1000;
+  if (seconds < 60) return `${seconds.toFixed(1).replace(".", ",")} dtk`;
+  const mins = Math.floor(seconds / 60);
+  const rem = Math.round(seconds % 60);
+  return `${mins} mnt ${rem} dtk`;
+}
+
 export default function MessageBubble({ message }: MessageBubbleProps) {
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const isUser = message.role === "user";
   const sources = message.sources ?? [];
+  const timeLabel = formatTime(message.createdAt);
+  const durationLabel = isUser ? null : formatDuration(message.durationMs);
 
   return (
     <div
-      className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}
+      className={cn(
+        "flex w-full flex-col gap-1",
+        isUser ? "items-end" : "items-start"
+      )}
     >
       <div
         className={cn(
@@ -167,6 +190,13 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         )}
       </div>
+
+      {(timeLabel || durationLabel) && (
+        <div className="px-1 text-[11px] tabular-nums text-muted-foreground">
+          {timeLabel}
+          {durationLabel && <span> · {durationLabel}</span>}
+        </div>
+      )}
     </div>
   );
 }

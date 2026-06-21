@@ -20,8 +20,12 @@ export function useChat(sessionId: string) {
 
   const sendMessage = useCallback(
     async (question: string) => {
+      const startedAt = Date.now();
       setMessages((prev) => {
-        const next: ChatMessage[] = [...prev, { role: "user", content: question }];
+        const next: ChatMessage[] = [
+          ...prev,
+          { role: "user", content: question, createdAt: startedAt },
+        ];
         saveMessages(sessionId, next);
         return next;
       });
@@ -110,11 +114,21 @@ export function useChat(sessionId: string) {
           }
         }
 
-        // Persist the completed exchange — skipped if the user switched sessions
-        // mid-stream (closure sessionId no longer matches the active one).
+        // Stamp the answer time + response duration, then persist. Skipped if the
+        // user switched sessions mid-stream (closure sessionId no longer active).
+        const finishedAt = Date.now();
         setMessages((cur) => {
-          if (activeSessionRef.current === sessionId) saveMessages(sessionId, cur);
-          return cur;
+          const updated = [...cur];
+          const last = updated[updated.length - 1];
+          if (last && last.role === "assistant") {
+            updated[updated.length - 1] = {
+              ...last,
+              createdAt: finishedAt,
+              durationMs: finishedAt - startedAt,
+            };
+          }
+          if (activeSessionRef.current === sessionId) saveMessages(sessionId, updated);
+          return updated;
         });
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
