@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: rag_frontend_app
+    ports:
+      - "13122:3000"
     expose:
       - "3000"
     environment:
