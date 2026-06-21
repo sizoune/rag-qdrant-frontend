@@ -108,9 +108,12 @@ function SourceBlock({ source }: { source: SourceItem }) {
 
 function formatTime(ts?: number): string | null {
   if (!ts) return null;
+  // Sertakan detik: waktu kirim & waktu jawaban sering jatuh di menit yang sama,
+  // jadi tanpa detik keduanya terlihat identik (mis. "23.51" vs "23.51").
   return new Date(ts).toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
   });
 }
 
