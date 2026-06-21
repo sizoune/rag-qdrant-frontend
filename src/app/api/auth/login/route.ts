@@ -31,10 +31,19 @@ export async function POST(request: NextRequest) {
 
   const token = await signToken(username);
 
+  // Mark the cookie Secure only when the client is actually on HTTPS. Behind
+  // Traefik (TLS-terminated) X-Forwarded-Proto is "https"; direct HTTP access
+  // over Tailscale (host port 13122) is "http", where a Secure cookie would be
+  // silently dropped by the browser and login would appear to do nothing.
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const isHttps = forwardedProto
+    ? forwardedProto.split(",")[0].trim() === "https"
+    : request.nextUrl.protocol === "https:";
+
   const response = NextResponse.json({ success: true });
   response.cookies.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24, // 24 hours
