@@ -103,6 +103,11 @@ export function useChat(sessionId: string) {
                         output_estimate: event.output_estimate || 0,
                         total_estimate: event.total_estimate || 0,
                       },
+                      // Server-reported response time (authoritative); overrides
+                      // the client wall-clock fallback set on completion.
+                      ...(event.elapsed_ms != null && {
+                        durationMs: event.elapsed_ms,
+                      }),
                     };
                   }
                   return updated;
@@ -124,7 +129,9 @@ export function useChat(sessionId: string) {
             updated[updated.length - 1] = {
               ...last,
               createdAt: finishedAt,
-              durationMs: finishedAt - startedAt,
+              // Prefer the server's elapsed_ms (set from token_usage); fall back
+              // to client wall-clock if the backend didn't report it.
+              durationMs: last.durationMs ?? finishedAt - startedAt,
             };
           }
           if (activeSessionRef.current === sessionId) saveMessages(sessionId, updated);

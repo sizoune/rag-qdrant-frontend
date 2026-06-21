@@ -37,6 +37,8 @@ export interface ChatResponse {
   answer: string;
   sources: SourceItem[];
   token_usage: TokenUsage;
+  /** Waktu respons terukur di server (ms). */
+  elapsed_ms?: number;
 }
 
 export interface SSEEvent {
@@ -46,6 +48,8 @@ export interface SSEEvent {
   input_estimate?: number;
   output_estimate?: number;
   total_estimate?: number;
+  /** Dikirim bersama event token_usage — waktu respons server (ms). */
+  elapsed_ms?: number;
 }
 
 export interface FileItem {
