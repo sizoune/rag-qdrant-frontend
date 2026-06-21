@@ -1,16 +1,30 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { ChatMessage, SSEEvent } from "@/lib/types";
+import { loadMessages, saveMessages } from "@/lib/chat-storage";
 
 export function useChat(sessionId: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const activeSessionRef = useRef(sessionId);
+
+  // Restore persisted history when the active session changes; cancel any
+  // in-flight stream so its tokens don't bleed into the newly selected session.
+  useEffect(() => {
+    activeSessionRef.current = sessionId;
+    abortRef.current?.abort();
+    setMessages(loadMessages(sessionId));
+  }, [sessionId]);
 
   const sendMessage = useCallback(
     async (question: string) => {
-      setMessages((prev) => [...prev, { role: "user", content: question }]);
+      setMessages((prev) => {
+        const next: ChatMessage[] = [...prev, { role: "user", content: question }];
+        saveMessages(sessionId, next);
+        return next;
+      });
       setIsLoading(true);
 
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
@@ -95,6 +109,13 @@ export function useChat(sessionId: string) {
             }
           }
         }
+
+        // Persist the completed exchange — skipped if the user switched sessions
+        // mid-stream (closure sessionId no longer matches the active one).
+        setMessages((cur) => {
+          if (activeSessionRef.current === sessionId) saveMessages(sessionId, cur);
+          return cur;
+        });
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
           setMessages((prev) => {

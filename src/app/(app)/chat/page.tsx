@@ -19,7 +19,7 @@ export default function ChatPage() {
     updateSessionTitle,
   } = useSessions();
 
-  const { messages, isLoading, sendMessage, stopGeneration, clearMessages } =
+  const { messages, isLoading, sendMessage, stopGeneration } =
     useChat(activeSessionId);
 
   const activeSession = sessions.find((s) => s.id === activeSessionId);
@@ -42,15 +42,13 @@ export default function ChatPage() {
   const handleSessionSelect = useCallback(
     (id: string) => {
       setActiveSessionId(id);
-      clearMessages();
     },
-    [setActiveSessionId, clearMessages]
+    [setActiveSessionId]
   );
 
   const handleCreateSession = useCallback(() => {
     createSession();
-    clearMessages();
-  }, [createSession, clearMessages]);
+  }, [createSession]);
 
   return (
     <div className="flex h-svh flex-col">
