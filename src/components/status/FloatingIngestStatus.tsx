@@ -36,7 +36,7 @@ export default function FloatingIngestStatus() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <div className="rounded-lg border bg-background ring-1 ring-ring shadow-[0_4px_24px_rgba(0,0,0,0.05)]">
+      <div className="rounded-xl border border-border bg-card shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
         <div
           className="flex items-center gap-2 px-3 py-2 cursor-pointer select-none"
           onClick={() => setExpanded(!expanded)}

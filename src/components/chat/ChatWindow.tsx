@@ -27,13 +27,14 @@ export default function ChatWindow({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto px-4 py-8">
         {messages.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center gap-2">
-            <p className="text-lg font-medium font-serif text-muted-foreground">{UI.CHAT_NO_MESSAGES}</p>
+          <div className="flex h-full flex-col items-center justify-center gap-1.5 text-center">
+            <p className="font-serif text-2xl text-foreground">{UI.CHAT_NO_MESSAGES}</p>
+            <p className="text-sm text-muted-foreground">{UI.CHAT_PLACEHOLDER}</p>
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl space-y-6">
+          <div className="mx-auto max-w-3xl space-y-8">
             {messages.map((msg, i) => (
               <MessageBubble key={i} message={msg} />
             ))}
