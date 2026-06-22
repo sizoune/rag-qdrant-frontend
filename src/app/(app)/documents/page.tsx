@@ -29,21 +29,25 @@ type TabId = (typeof tabs)[number]["id"];
 function KBSection() {
   const [data, setData] = useState<FileListResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [isReingestingAll, setIsReingestingAll] = useState(false);
   const [isMigrating, setIsMigrating] = useState(false);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const fetchFiles = useCallback(async () => {
+    setIsFetching(true);
     try {
-      const res = await fetch(`/api/files?page=${page}&page_size=10`);
+      const res = await fetch(`/api/files?page=${page}&page_size=${pageSize}`);
       const json: FileListResponse = await res.json();
       setData(json);
     } catch {
       toast.error(UI.COMMON_ERROR);
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
-  }, [page]);
+  }, [page, pageSize]);
 
   useEffect(() => {
     fetchFiles();
@@ -124,18 +128,43 @@ function KBSection() {
           </div>
         ) : data ? (
           <>
-            <FileTable files={data.items} onRefresh={fetchFiles} />
-            {data.total_pages > 1 && (
-              <div className="flex items-center justify-between mt-4">
+            <div
+              className={cn(
+                "transition-opacity",
+                isFetching && "pointer-events-none opacity-60"
+              )}
+            >
+              <FileTable files={data.items} onRefresh={fetchFiles} />
+            </div>
+            {data.total > 0 && (
+              <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
                   Halaman {data.page} dari {data.total_pages} ({data.total} dokumen)
                 </p>
                 <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    Per halaman
+                    <select
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setPage(1);
+                      }}
+                      disabled={isFetching}
+                      className="h-7 rounded-md border border-border bg-background px-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:opacity-50"
+                    >
+                      {[10, 25, 50, 100].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page <= 1}
+                    disabled={page <= 1 || isFetching}
                   >
                     Sebelumnya
                   </Button>
@@ -143,7 +172,7 @@ function KBSection() {
                     variant="outline"
                     size="sm"
                     onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))}
-                    disabled={page >= data.total_pages}
+                    disabled={page >= data.total_pages || isFetching}
                   >
                     Selanjutnya
                   </Button>
