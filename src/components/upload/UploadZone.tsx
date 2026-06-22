@@ -12,6 +12,8 @@ import {
   XCircle,
 } from "lucide-react";
 
+const MAX_UPLOAD_BYTES = 100 * 1024 * 1024; // 100 MB
+
 type FileUploadStatus = "pending" | "uploading" | "success" | "failed";
 
 interface UploadFileEntry {
@@ -57,6 +59,18 @@ export default function UploadZone({ onUploadComplete }: UploadZoneProps) {
             idx === i ? { ...e, status: "uploading" } : e
           )
         );
+
+        if (entries[i].file.size > MAX_UPLOAD_BYTES) {
+          allSuccess = false;
+          setUploadEntries((prev) =>
+            prev.map((e, idx) =>
+              idx === i
+                ? { ...e, status: "failed", error: "Ukuran file melebihi 100 MB" }
+                : e
+            )
+          );
+          continue;
+        }
 
         try {
           const formData = new FormData();
@@ -187,7 +201,7 @@ export default function UploadZone({ onUploadComplete }: UploadZoneProps) {
         <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
         <p className="text-sm font-medium">{UI.UPLOAD_DROPZONE}</p>
         <p className="text-xs text-muted-foreground mt-1">
-          {UI.UPLOAD_SUPPORTED}
+          {UI.UPLOAD_SUPPORTED} (maks 100 MB)
         </p>
         <input
           ref={fileInputRef}
