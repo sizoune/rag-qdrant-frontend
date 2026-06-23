@@ -19,7 +19,7 @@ export function useChat(sessionId: string) {
   }, [sessionId]);
 
   const sendMessage = useCallback(
-    async (question: string) => {
+    async (question: string, enableWebSearch = false) => {
       const startedAt = Date.now();
       setMessages((prev) => {
         const next: ChatMessage[] = [
@@ -40,7 +40,11 @@ export function useChat(sessionId: string) {
         const response = await fetch("/api/chat/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question, session_id: sessionId }),
+          body: JSON.stringify({
+            question,
+            session_id: sessionId,
+            enable_web_search: enableWebSearch,
+          }),
           signal: controller.signal,
         });
 
@@ -87,6 +91,18 @@ export function useChat(sessionId: string) {
                     updated[updated.length - 1] = {
                       ...last,
                       sources: event.sources,
+                    };
+                  }
+                  return updated;
+                });
+              } else if (event.type === "web_search") {
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  const last = updated[updated.length - 1];
+                  if (last.role === "assistant") {
+                    updated[updated.length - 1] = {
+                      ...last,
+                      webSearchUsed: event.used ?? false,
                     };
                   }
                   return updated;

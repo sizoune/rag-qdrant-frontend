@@ -1,6 +1,8 @@
 export interface ChatRequest {
   question: string;
   session_id?: string;
+  /** Opt-in fallback ke pencarian web saat RAG tak menemukan jawaban. */
+  enable_web_search?: boolean;
 }
 
 export interface TokenUsage {
@@ -39,10 +41,12 @@ export interface ChatResponse {
   token_usage: TokenUsage;
   /** Waktu respons terukur di server (ms). */
   elapsed_ms?: number;
+  /** True bila jawaban berasal dari fallback pencarian web. */
+  web_search_used?: boolean;
 }
 
 export interface SSEEvent {
-  type: "token" | "sources" | "token_usage" | "done";
+  type: "token" | "sources" | "token_usage" | "web_search" | "done";
   content?: string;
   sources?: SourceItem[];
   input_estimate?: number;
@@ -50,6 +54,8 @@ export interface SSEEvent {
   total_estimate?: number;
   /** Dikirim bersama event token_usage — waktu respons server (ms). */
   elapsed_ms?: number;
+  /** Dikirim bersama event web_search — apakah fallback web terpakai. */
+  used?: boolean;
 }
 
 export interface FileItem {
@@ -126,4 +132,6 @@ export interface ChatMessage {
   createdAt?: number;
   /** Assistant only — lama response (ms) dari pertanyaan dikirim s/d jawaban selesai. */
   durationMs?: number;
+  /** Assistant only — jawaban berasal dari fallback pencarian web. */
+  webSearchUsed?: boolean;
 }

@@ -9,7 +9,7 @@ import type { ChatMessage } from "@/lib/types";
 interface ChatWindowProps {
   messages: ChatMessage[];
   isLoading: boolean;
-  onSend: (message: string) => void;
+  onSend: (message: string, enableWebSearch: boolean) => void;
   onStop: () => void;
 }
 

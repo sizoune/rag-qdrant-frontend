@@ -1,28 +1,30 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Send, Square } from "lucide-react";
+import { Globe, Send, Square } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string, enableWebSearch: boolean) => void;
   isLoading: boolean;
   onStop?: () => void;
 }
 
 export default function ChatInput({ onSend, isLoading, onStop }: ChatInputProps) {
   const [value, setValue] = useState("");
+  const [webSearch, setWebSearch] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = useCallback(() => {
     const trimmed = value.trim();
     if (!trimmed || isLoading) return;
-    onSend(trimmed);
+    onSend(trimmed, webSearch);
     setValue("");
     textareaRef.current?.focus();
-  }, [value, isLoading, onSend]);
+  }, [value, isLoading, webSearch, onSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -44,6 +46,17 @@ export default function ChatInput({ onSend, isLoading, onStop }: ChatInputProps)
           className="min-h-10 max-h-40 resize-none border-0 shadow-none focus-visible:ring-0"
           rows={1}
         />
+        <Button
+          type="button"
+          variant={webSearch ? "default" : "ghost"}
+          size="icon"
+          onClick={() => setWebSearch((v) => !v)}
+          aria-pressed={webSearch}
+          aria-label={UI.CHAT_WEB_SEARCH}
+          title={webSearch ? UI.CHAT_WEB_SEARCH_ON : UI.CHAT_WEB_SEARCH_OFF}
+        >
+          <Globe className={cn("size-4", !webSearch && "text-muted-foreground")} />
+        </Button>
         {isLoading ? (
           <Button
             variant="destructive"

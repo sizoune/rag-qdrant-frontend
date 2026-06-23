@@ -18,6 +18,10 @@ export const UI = {
   CHAT_INPUT_TOKENS: "Token Input",
   CHAT_OUTPUT_TOKENS: "Token Output",
   CHAT_TOTAL_TOKENS: "Total Token",
+  CHAT_WEB_SEARCH: "Pencarian web",
+  CHAT_WEB_SEARCH_ON: "Pencarian web: aktif",
+  CHAT_WEB_SEARCH_OFF: "Pencarian web: nonaktif",
+  CHAT_WEB_SEARCH_USED: "Dari pencarian web",
 
   // Knowledge Base
   KB_TITLE: "Basis Pengetahuan",

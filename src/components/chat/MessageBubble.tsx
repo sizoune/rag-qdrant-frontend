@@ -185,11 +185,19 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         )}
 
-        {!isUser && message.token_usage && (
+        {!isUser && (message.token_usage || message.webSearchUsed) && (
           <div className="mt-2 flex flex-wrap gap-1">
-            <Badge variant="secondary" className="text-[10px]">
-              {UI.CHAT_TOTAL_TOKENS}: {message.token_usage.total_estimate}
-            </Badge>
+            {message.webSearchUsed && (
+              <Badge variant="secondary" className="gap-1 text-[10px]">
+                <Globe className="size-3" />
+                {UI.CHAT_WEB_SEARCH_USED}
+              </Badge>
+            )}
+            {message.token_usage && (
+              <Badge variant="secondary" className="text-[10px]">
+                {UI.CHAT_TOTAL_TOKENS}: {message.token_usage.total_estimate}
+              </Badge>
+            )}
           </div>
         )}
       </div>

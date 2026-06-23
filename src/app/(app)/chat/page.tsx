@@ -25,7 +25,7 @@ export default function ChatPage() {
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
   const handleSend = useCallback(
-    (question: string) => {
+    (question: string, enableWebSearch: boolean) => {
       // Update session title with first message
       const active = sessions.find((s) => s.id === activeSessionId);
       if (active && active.title === "Sesi Baru" && messages.length === 0) {
@@ -34,7 +34,7 @@ export default function ChatPage() {
           question.substring(0, 30) + (question.length > 30 ? "..." : "")
         );
       }
-      sendMessage(question);
+      sendMessage(question, enableWebSearch);
     },
     [activeSessionId, sessions, messages.length, sendMessage, updateSessionTitle]
   );
