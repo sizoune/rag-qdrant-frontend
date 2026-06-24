@@ -209,7 +209,7 @@ export default function UploadZone({ onUploadComplete }: UploadZoneProps) {
           multiple
           className="hidden"
           onChange={handleInputChange}
-          accept=".pdf,.docx,.txt,.md,.csv"
+          accept=".pdf,.docx,.pptx,.txt,.md,.csv"
         />
       </div>
 

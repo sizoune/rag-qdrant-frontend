@@ -44,7 +44,7 @@ export const UI = {
   // Upload
   UPLOAD_TITLE: "Unggah Dokumen",
   UPLOAD_DROPZONE: "Seret file ke sini atau klik untuk memilih",
-  UPLOAD_SUPPORTED: "Format yang didukung: PDF, DOCX, TXT, MD, CSV",
+  UPLOAD_SUPPORTED: "Format yang didukung: PDF, DOCX, PPTX, TXT, MD, CSV",
   UPLOAD_PROGRESS: "file diunggah",
   UPLOAD_START_INGEST: "Mulai Ingest",
   UPLOAD_DELETE: "Hapus",
