@@ -58,6 +58,10 @@ export interface SSEEvent {
   used?: boolean;
 }
 
+/** Kolom yang bisa diurut di /api/v1/files — selaras dengan Literal di backend. */
+export type SortBy = "last_seen" | "chunk_count" | "filename" | "source_type";
+export type SortDir = "asc" | "desc";
+
 export interface FileItem {
   source_id: string;
   source: string;

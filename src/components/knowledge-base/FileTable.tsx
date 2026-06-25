@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileItem } from "@/lib/types";
+import { FileItem, SortBy, SortDir } from "@/lib/types";
 import { UI } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   Table,
@@ -22,14 +23,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Trash2, RefreshCw, Loader2, Cloud, CloudOff } from "lucide-react";
+import { Trash2, RefreshCw, Loader2, Cloud, CloudOff, ArrowUp, ArrowDown } from "lucide-react";
 
 interface FileTableProps {
   files: FileItem[];
   onRefresh: () => void;
+  sortBy: SortBy;
+  sortDir: SortDir;
+  onSort: (column: SortBy) => void;
 }
 
-export default function FileTable({ files, onRefresh }: FileTableProps) {
+export default function FileTable({ files, onRefresh, sortBy, sortDir, onSort }: FileTableProps) {
   const [deleteTarget, setDeleteTarget] = useState<FileItem | null>(null);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
@@ -81,6 +85,36 @@ export default function FileTable({ files, onRefresh }: FileTableProps) {
     return new Date(dateStr).toLocaleString("id-ID");
   };
 
+  const SortableHead = ({
+    column,
+    label,
+    align,
+  }: {
+    column: SortBy;
+    label: string;
+    align?: "right";
+  }) => (
+    <TableHead className={align === "right" ? "text-right" : undefined}>
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className={cn(
+          "inline-flex items-center gap-1 hover:text-foreground transition-colors",
+          align === "right" && "flex-row-reverse",
+          sortBy === column ? "text-foreground" : "text-muted-foreground"
+        )}
+      >
+        {label}
+        {sortBy === column &&
+          (sortDir === "asc" ? (
+            <ArrowUp className="h-3 w-3" />
+          ) : (
+            <ArrowDown className="h-3 w-3" />
+          ))}
+      </button>
+    </TableHead>
+  );
+
   if (files.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -94,10 +128,10 @@ export default function FileTable({ files, onRefresh }: FileTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{UI.KB_SOURCE}</TableHead>
-            <TableHead>{UI.KB_TYPE}</TableHead>
-            <TableHead className="text-right">{UI.KB_CHUNKS}</TableHead>
-            <TableHead>{UI.KB_LAST_SEEN}</TableHead>
+            <SortableHead column="filename" label={UI.KB_SOURCE} />
+            <SortableHead column="source_type" label={UI.KB_TYPE} />
+            <SortableHead column="chunk_count" label={UI.KB_CHUNKS} align="right" />
+            <SortableHead column="last_seen" label={UI.KB_LAST_SEEN} />
             <TableHead className="text-center">{UI.KB_S3_STATUS}</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Database, Upload, Globe, Activity, CloudUpload } from "lucide-react";
+import { Database, Upload, Globe, Activity, CloudUpload, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
-import { FileListResponse, OperationResponse } from "@/lib/types";
+import { FileListResponse, OperationResponse, SortBy, SortDir } from "@/lib/types";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,11 +34,41 @@ function KBSection() {
   const [isMigrating, setIsMigrating] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("last_seen");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  // Debounce input pencarian; reset ke halaman 1 saat query berubah.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  const handleSort = (column: SortBy) => {
+    if (column === sortBy) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(column);
+      setSortDir("desc");
+    }
+    setPage(1);
+  };
 
   const fetchFiles = useCallback(async () => {
     setIsFetching(true);
     try {
-      const res = await fetch(`/api/files?page=${page}&page_size=${pageSize}`);
+      const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(pageSize),
+        sort_by: sortBy,
+        sort_dir: sortDir,
+      });
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/files?${params}`);
       const json: FileListResponse = await res.json();
       setData(json);
     } catch {
@@ -47,7 +77,7 @@ function KBSection() {
       setIsLoading(false);
       setIsFetching(false);
     }
-  }, [page, pageSize]);
+  }, [page, pageSize, search, sortBy, sortDir]);
 
   useEffect(() => {
     fetchFiles();
@@ -120,6 +150,15 @@ function KBSection() {
         </div>
       </CardHeader>
       <CardContent>
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder={UI.KB_SEARCH_PLACEHOLDER}
+            className="pl-9"
+          />
+        </div>
         {isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -134,7 +173,13 @@ function KBSection() {
                 isFetching && "pointer-events-none opacity-60"
               )}
             >
-              <FileTable files={data.items} onRefresh={fetchFiles} />
+              <FileTable
+                files={data.items}
+                onRefresh={fetchFiles}
+                sortBy={sortBy}
+                sortDir={sortDir}
+                onSort={handleSort}
+              />
             </div>
             {data.total > 0 && (
               <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center sm:justify-between">

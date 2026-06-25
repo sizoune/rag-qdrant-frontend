@@ -1,9 +1,10 @@
 import { proxyRequest } from "@/lib/proxy";
 import { NextRequest } from "next/server";
 
+// Teruskan semua query param apa adanya — backend memvalidasi sort_by/sort_dir
+// (Literal) & mengabaikan yang tak dikenal. Param yang didukung: page, page_size,
+// search, source_type, in_s3, sort_by, sort_dir.
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const page = searchParams.get("page") || "1";
-  const pageSize = searchParams.get("page_size") || "10";
-  return proxyRequest("GET", `/api/v1/files?page=${page}&page_size=${pageSize}`);
+  const qs = request.nextUrl.searchParams.toString();
+  return proxyRequest("GET", `/api/v1/files${qs ? `?${qs}` : ""}`);
 }

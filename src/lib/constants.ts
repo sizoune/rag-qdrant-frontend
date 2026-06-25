@@ -40,6 +40,7 @@ export const UI = {
   KB_S3_STATUS: "S3",
   KB_IN_S3: "Tersimpan",
   KB_NOT_IN_S3: "Belum",
+  KB_SEARCH_PLACEHOLDER: "Cari berdasarkan nama sumber...",
 
   // Upload
   UPLOAD_TITLE: "Unggah Dokumen",
